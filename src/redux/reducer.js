@@ -3,11 +3,14 @@ export const reducer = (state , action ) => {
     if (action.type === 'ADD_SAVE') {  return {...state,save : state.save + 1 ,saveItems:[...state.saveItems ,action.payload.item] }}  
     if (action.type === "BUY_ITEM"){
         const item = {...action.payload.item , quantity:1}
-        // let total = state.storeItems.reduce((total,item)=> {
-        //     total = item.price * item.amount 
-        //     return total},total=state.allPrice) 
-        // console.log(total)
-        return {...state,store:state.store + 1,storeItems:[...state.storeItems ,item]   }}
+        console.log(item)
+        const Itemss = [...state.storeItems ,item]
+        let total = Itemss.reduce((total,item)=>{
+            const {quantity,price} = item 
+            total += quantity*price
+            return total
+        },0) 
+        return {...state,store:state.store + 1,storeItems:Itemss ,allPrice:parseFloat(total.toFixed(2))   }}
 
     if (action.type === "UNSAVE") 
     { console.log("IDDDDD",action.payload.id) ;
@@ -15,8 +18,14 @@ export const reducer = (state , action ) => {
         saveItems:state.saveItems.filter(item => {console.log("as") ;return action.payload.id !== item.id}) }}
 
     if (action.type === "UNBUY_ITEM") {
-        console.log("IDDDDD",action.payload.id) ;
-        return {...state,store:state.store - 1 ,storeItems:state.storeItems.filter(item => {console.log("as") ;return action.payload.id !== item.id}) }}
+        // console.log("IDDDDD",action.payload.id) ;
+        const Itemss = state.storeItems.filter(item => {console.log("as") ;return action.payload.id !== item.id}) 
+        let total = Itemss.reduce((total,item)=>{
+            const {quantity,price} = item 
+            total += quantity*price
+            return total
+        },0) 
+        return {...state,store:state.store - 1 ,storeItems:Itemss,allPrice:parseFloat(total.toFixed(2)) }}
 
     if (action.type === 'INCREMENT') 
     {
@@ -26,7 +35,12 @@ export const reducer = (state , action ) => {
             if (item.id === action.payload.id) return Item 
             else return item 
         })
-        return {...state , storeItems:newItem} 
+        let total = newItem.reduce((total,item)=>{
+            const {quantity,price} = item 
+            total += quantity*price
+            return total
+        },0) 
+        return {...state , storeItems:newItem,allPrice:parseFloat(total.toFixed(2))} 
     }
 
     if (action.type === "DECREMENT")
@@ -39,7 +53,12 @@ export const reducer = (state , action ) => {
             if (item.id === action.payload.id) return Item 
             else return item 
         })
-        return {...state , storeItems:newItem} 
+        let total = newItem.reduce((total,item)=>{
+            const {quantity,price} = item 
+            total += quantity*price
+            return total
+        },0) 
+        return {...state , storeItems:newItem,allPrice:parseFloat(total.toFixed(2))} 
     }
     return state ; 
 }
